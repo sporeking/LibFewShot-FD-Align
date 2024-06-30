@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 from core.utils import accuracy
 from .finetuning_model import FinetuningModel
@@ -29,6 +30,7 @@ class CLIP_context(FinetuningModel):
             param.requires_grad = False
         del clip_model_
         self.loss_ctx = torch.nn.KLDivLoss()
+        self.loss_func = F.cross_entropy()
 
     def set_forward(self, batch):
         """
@@ -43,7 +45,19 @@ class CLIP_context(FinetuningModel):
         support_feat, query_feat, support_target, query_target = self.split_by_episode(
             feat, mode=1
         )
-        episode_size = support_feat.size(0)
+        
+        output = self.classifier(
+            query_feat,
+            support_feat,
+            self.way_num,
+            self.shot_num,
+            self.query_num,
+            mode="cos_sim",
+        ).reshape(-1, self.way_num)
+        
+        acc = accuracy(output, query_target.reshape(-1))
+        
+        return output, acc
 
         # return output, acc
 
@@ -64,14 +78,15 @@ class CLIP_context(FinetuningModel):
         ctx_loss = self.loss_ctx(torch.log(F.softmax(self.context_classifier(feat), dim=1)), F.softmax(self.context_classifier(zero_feat), dim=1))
         ctx_loss = self.scale * ctx_loss
         
-        logits = self.classifier(feat, zero_feat, self.way_num, self.shot_num, self.query_num)
-
-        # loss = self.loss_func(output, target)
-        # acc = accuracy(output, target)
-        return output, acc, loss
-        # return output, acc, loss
+        support_feat, query_feat, support_target, query_target = self.split_by_episode(
+            feat, mode=1
+        )
+        logits = self.classifier(query_feat, support_feat, self.way_num, self.shot_num, self.query_num, mode="cos_sim")
+        loss = self.loss_func(logits, query_target)
+        acc = accuracy(logits, query_target)
+        
+        return logits, acc, loss
 
     def set_forward_adaptation(self, support_feat, support_target, query_feat):
-        # 
-        #return output
-        pass
+        raise NotImplementedError   
+        
