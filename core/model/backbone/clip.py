@@ -12,8 +12,8 @@ from PIL import Image
 from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize, RandomResizedCrop
 from tqdm import tqdm
 
-from architectures.feature_extractor.model import build_model
-from architectures.feature_extractor.tokenizer import SimpleTokenizer as _Tokenizer
+from .model import build_model
+from .tokenizer import SimpleTokenizer as _Tokenizer
 
 __all__ = ["available_models", "load", "tokenize"]
 _tokenizer = _Tokenizer()

@@ -1,0 +1,23 @@
+includes:
+  - headers/data.yaml
+  - headers/device.yaml
+  - headers/misc.yaml
+  - headers/model.yaml
+  - headers/optimizer.yaml
+  - classifiers/Baseline.yaml
+  - backbones/vit.yaml
+
+pretrain_path: datasets/pretrain_model/ViT-B-32.pt
+
+classifier:
+  name: CLIP_context
+  kwargs:
+    backbone_name: ViT_B_32
+
+backbone:
+  name: clip
+  
+
+
+
+
