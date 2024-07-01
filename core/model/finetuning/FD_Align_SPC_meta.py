@@ -10,17 +10,16 @@ from datasets.openai_imagenet_temple import openai_imagenet_template
 from datasets.class_name import mini_train
 
 class CLIP_context(FinetuningModel):
-    def __init__(self, feat_dim, num_class, inner_param, **kwargs) -> None:
+    def __init__(self, 
+                 backbone_name = "ViT_B_32",
+                 cscale: float = 1.0,
+                 **kwargs) -> None:
         super(CLIP_context, self).__init__(**kwargs)
-        self.feat_dim = feat_dim
-        self.num_class = num_class
-        self.inner_param = inner_param
-        self.backbone_name = "ViT_B_32"
 
         self.classifier = ProtoLayer()
-        clip_model = ImageEncoder(self.backbone_name)
-        clip_model_, _, _ = load(self.backbone_name, jit=False)
-        self.scale : float = kwargs["cscale"] if "cscale" in kwargs else 1.0
+        clip_model = ImageEncoder(backbone_name)
+        clip_model_, _, _ = load(backbone_name, jit=False)
+        self.scale = cscale
         
         self.zero_shot_clip = clip_model
         for param in self.zero_shot_clip.parameters():
@@ -83,6 +82,7 @@ class CLIP_context(FinetuningModel):
         )
         logits = self.classifier(query_feat, support_feat, self.way_num, self.shot_num, self.query_num, mode="cos_sim")
         loss = self.loss_func(logits, query_target)
+        loss = loss + ctx_loss
         acc = accuracy(logits, query_target)
         
         return logits, acc, loss
