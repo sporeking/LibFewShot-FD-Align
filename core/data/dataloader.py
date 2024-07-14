@@ -3,7 +3,7 @@ from torch.utils import data
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from torchvision import transforms
-
+from PIL import Image
 from core.data.dataset import GeneralDataset
 from .collates import get_collate_function, get_augment_method,get_mean_std
 from .samplers import DistributedCategoriesSampler, get_sampler
@@ -15,6 +15,7 @@ STD = [70.68188272 / 255.0, 68.27635443 / 255.0, 72.54505529 / 255.0]
 import torch
 from queue import Queue
 from threading import Thread
+
 
 
 def get_dataloader(config, mode, model_type, distribute):
@@ -55,7 +56,8 @@ def get_dataloader(config, mode, model_type, distribute):
 
         collate_function = get_collate_function(config, trfms, mode, model_type)
 
-        few_shot = not (model_type == ModelType.FINETUNING and mode == "train")
+        few_shot = not (model_type == ModelType.FINETUNING and mode == "train" and config["augment_method"]!="FD_Align")
+       # print("few_shot",few_shot)
 
         sampler = get_sampler(
             dataset=dataset,

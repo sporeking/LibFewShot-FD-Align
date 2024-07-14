@@ -425,8 +425,8 @@ class ClassificationHead(torch.nn.Linear):
         print(f'Loading classification head from {filename}')
         return torch_load(filename)
     
-def create_model():
-    return ImageEncoder("ViT-B/32")
+def clip(**kwargs):
+    return ImageEncoder("ViT_B_32")
 
 def get_CLIP_contrastive_logits(image_feature, text_embedding):
     text_embedding = text_embedding.to(image_feature.device)

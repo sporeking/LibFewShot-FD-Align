@@ -5,7 +5,10 @@ from .randaugment import RandAugment
 from torchvision import transforms
 
 CJ_DICT = {"brightness": 0.4, "contrast": 0.4, "saturation": 0.4}
+from PIL import Image
 
+def _convert_to_rgb(image):
+    return image.convert('RGB')
 
 def get_augment_method(
     config,
@@ -67,18 +70,25 @@ def get_augment_method(
                 transforms.RandomHorizontalFlip(),
                 transforms.ColorJitter(**CJ_DICT),
             ]
+        elif config["augment_method"] == "FD_Align" or "FD_CoOp":
+            trfms_list = [
+                transforms.RandomResizedCrop(config["image_size"],scale=(0.08, 1.0),interpolation=Image.BICUBIC),
+                 _convert_to_rgb
+            ]
         else:
             trfms_list = get_default_image_size_trfms(config["image_size"])
             trfms_list += [
                 transforms.ColorJitter(**CJ_DICT),
                 transforms.RandomHorizontalFlip(),
             ]
+        
             
     else:
         if config["image_size"] == 224:
             trfms_list = [
-                transforms.Resize((256, 256)),
+                transforms.Resize((224, 224), interpolation=Image.BICUBIC),
                 transforms.CenterCrop((224, 224)),
+                 _convert_to_rgb
             ]
         elif config["image_size"] == 84:
             trfms_list = [
@@ -138,8 +148,10 @@ def get_mean_std(
         
     """
 
-    MEAN = [120.39586422 / 255.0, 115.59361427 / 255.0, 104.54012653 / 255.0]
-    STD = [70.68188272 / 255.0, 68.27635443 / 255.0, 72.54505529 / 255.0]
+    # MEAN = [120.39586422 / 255.0, 115.59361427 / 255.0, 104.54012653 / 255.0]
+    # STD = [70.68188272 / 255.0, 68.27635443 / 255.0, 72.54505529 / 255.0]
+    MEAN = [0.48145466, 0.4578275, 0.40821073]
+    STD = [0.26862954, 0.26130258, 0.27577711]
     
     if "augment_method" not in config or config["augment_method"] == "NormalAug":
         MEAN = [120.39586422 / 255.0, 115.59361427 / 255.0, 104.54012653 / 255.0]

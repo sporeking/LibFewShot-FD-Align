@@ -1,0 +1,4 @@
+classifier:
+  name: CLIP_context_only_CoOp
+  kwargs:
+    backbone_name: ViT_B_32

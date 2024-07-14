@@ -57,9 +57,11 @@ class AbstractModel(nn.Module):
         split features by episode and
         generate local targets + split labels by episode
         """
+        #print(features.shape)
         episode_size = features.size(0) // (
             self.way_num * (self.shot_num + self.query_num)
         )
+        #print(self.way_num * (self.shot_num + self.query_num))
         local_labels = (
             self._generate_local_targets(episode_size)
             .to(self.device)
@@ -68,6 +70,7 @@ class AbstractModel(nn.Module):
         )
 
         if mode == 1:  # input 2D, return 3D(with episode) E.g.ANIL & R2D2
+            #print(features.shape)
             features = features.contiguous().view(
                 episode_size, self.way_num, self.shot_num + self.query_num, -1
             )
@@ -87,6 +90,7 @@ class AbstractModel(nn.Module):
             query_target = local_labels[:, :, self.shot_num :].reshape(
                 episode_size, self.way_num * self.query_num
             )
+           # print(query_target,support_target)
         elif mode == 2:  # input 4D, return 5D(with episode) E.g.DN4
             b, c, h, w = features.shape
             features = features.contiguous().view(

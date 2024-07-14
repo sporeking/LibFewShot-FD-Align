@@ -1,0 +1,4 @@
+classifier:
+  name: CLIP_context
+  kwargs:
+    backbone_name: ViT_B_32

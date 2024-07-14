@@ -9,13 +9,13 @@ from core.config import Config
 from core import Test
 
 
-PATH = "./results/DN4-miniImageNet--ravi-Conv64F-5-1-Dec-01-2021-06-05-20"
+PATH = "./results/CLIP_context-miniImageNet--ravi-clip-5-5-Jul-03-2024-11-24-18"
 VAR_DICT = {
-    "test_epoch": 5,
-    "device_ids": "4,5",
-    "n_gpu": 2,
-    "test_episode": 600,
-    "episode_size": 2,
+    "test_epoch": 1,
+    "device_ids": "0",
+    "n_gpu": 1,
+    "test_episode": 1000,
+    "episode_size": 1,
 }
 
 

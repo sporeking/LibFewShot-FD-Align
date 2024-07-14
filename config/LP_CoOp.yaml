@@ -4,15 +4,16 @@ includes:
   - headers/misc.yaml
   - headers/model.yaml
   - headers/optimizer.yaml
-  - classifiers/CLIP_context.yaml
+  - classifiers/CLIP_context_only_CoOp.yaml
   - backbones/clip.yaml
 
 # pretrain_path: datasets/pretrain_model/ViT-B-32.pt
 
 classifier:
-  name: CLIP_context
+  name: CLIP_context_only_CoOP
   kwargs:
     backbone_name: ViT_B_32
+    cname: caltech101
 
 backbone:
   name: clip

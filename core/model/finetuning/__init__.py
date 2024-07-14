@@ -11,3 +11,5 @@ from .deepbdc_pretrain import DeepBDC_Pretrain
 from .s2m2 import S2M2
 from .frn_pretrain import FRN_Pretrain
 from .metabaseline_pretrain import MetabaselinePretrain
+from .FD_Align_SPC_meta import CLIP_context
+from .LP_CoOp import CLIP_context_only_CoOP
